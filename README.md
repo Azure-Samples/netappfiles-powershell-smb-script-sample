@@ -64,9 +64,6 @@ The following table describes all files within this solution:
 	 CreateANFVolume.ps1
 	 ```
 
-	Sample output
-	![e2e execution](./media/Basic/e2e-execution.png)
-
 	OR
 	
     Advanced mode - More advanced way to run the script to create Azure Netapp Files with validation using modules
@@ -98,8 +95,9 @@ The following table describes all files within this solution:
 	| -SmbServerNamePrefix 	| Yes		|				|
     | -CleanupResources		| No		| False			|
 	
+	
 	Sample output
-	![e2e execution](./media/Advanced/e2e-execution.png)
+	![e2e execution](./e2e-execution.png)
 
 # Troubleshoot
 
