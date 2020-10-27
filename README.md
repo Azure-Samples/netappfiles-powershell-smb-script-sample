@@ -97,7 +97,7 @@ The following table describes all files within this solution:
 	
 	
 	Sample output
-	![e2e execution](./e2e-execution.png)
+	![e2e execution](./media/e2e-execution.png)
 
 # Troubleshoot
 
