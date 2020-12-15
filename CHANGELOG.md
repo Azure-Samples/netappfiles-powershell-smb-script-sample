@@ -1,13 +1,14 @@
-## [project-title] Changelog
+## Azure NetApp Files - SMB Sample PowerShell script
 
-<a name="x.y.z"></a>
-# x.y.z (yyyy-mm-dd)
+[1.0.0 (2020-10-15)](#1.0.0 (2020-10-15))
+
+# 1.0.0 (2019-10-09)
 
 *Features*
-* ...
+* Initial commit
 
 *Bug Fixes*
-* ...
+* N/A
 
 *Breaking Changes*
-* ...
+* N/A
