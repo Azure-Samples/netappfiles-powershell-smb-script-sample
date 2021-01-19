@@ -15,18 +15,19 @@ This project demonstrates how to use Powershell with NetApp Files SDK for Micros
 In this sample application we perform the following operations:
 
 * Creation
-  * ANF Account
+  * NetApp Account
   * Capacity pool 
   * SMB Volume  
  
-* Deletion, the clean up process takes place (not enabled by default, please set the parameter CleanupResources to $true if you want the clean up code to take a place),deleting all resources in the reverse order following the hierarchy otherwise we can't remove resources that have nested resources still live.
+* Deletion
+	The clean-up process takes place, deleting all resources in the reverse order following the hierarchy. Otherwise we can't remove resources that have nested resources still live. (The clean-up proess is not enabled by default. You need to  set the parameter CleanupResources to $true if you want the clean up code to take a place.)
 
 
 If you don't already have a Microsoft Azure subscription, you can get a FREE trial account [here](http://go.microsoft.com/fwlink/?LinkId=330212).
 
 ## Prerequisites
 
-1. Azure Subscription
+1. Azure subscription
 1. Subscription needs to be enabled for Azure NetApp Files. For more information, please refer to [this](https://docs.microsoft.com/azure/azure-netapp-files/azure-netapp-files-register#waitlist) document.
 1. Resource Group created
 1. Virtual Network with a delegated subnet to Microsoft.Netapp/volumes resource. For more information, please refer to [Guidelines for Azure NetApp Files network planning](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-network-topologies)
@@ -48,12 +49,12 @@ The following table describes all files within this solution:
 
 # How to run the PowerShell script
 
-1. Clone it locally
+1. Clone the script locally:
     ```powershell
     git clone https://github.com/Azure-Samples/netappfiles-powershell-nfs-sdk-sample.git
     ```
 	
-1. Modes: There are two options to run the script
+1. Modes: There are two options to run the script: 
 
 	Basic mode - Single script create Azure NetApp files with no validation.
 	 * Change folder to **netappfiles-powershell-nfs-sdk-sample\src\Basic**
@@ -101,14 +102,14 @@ The following table describes all files within this solution:
 
 # Troubleshoot
 
-If you encounter the below issue when running the PoweShell command
+If you encounter the below issue when running the PoweShell command: 
 
 ```
 .\CreateANFVolume.ps1 : .\CreateANFVolume.ps1 cannot be loaded. The file .\CreateANFVolume.ps1 is not digitally signed. You cannot 
 run this script on the current system.
 ```
 
-Run the following command
+Run the following command: 
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 
 # References
