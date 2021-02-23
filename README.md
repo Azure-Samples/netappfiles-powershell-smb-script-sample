@@ -15,7 +15,7 @@ This project demonstrates how to use Powershell with NetApp Files SDK for Micros
 In this sample application we perform the following operations:
 
 * Creation
-  * NetApp Account
+  * Azure NetApp Account
   * Capacity pool 
   * SMB Volume  
  
@@ -57,7 +57,7 @@ The following table describes all files within this solution:
 1. Modes: There are two options to run the script: 
 
 	Basic mode - Single script create Azure NetApp files with no validation.
-	 * Change folder to **netappfiles-powershell-nfs-sdk-sample\src\Basic**
+	 * Change folder to **netappfiles-powershell-smb-script-sample\src\Basic**
 	 * Open CreateANFVolume and edit all the parameters
 	 * Save and close
 	 * Run the following command
@@ -68,7 +68,7 @@ The following table describes all files within this solution:
 	OR
 	
     Advanced mode - More advanced way to run the script to create Azure Netapp Files with validation using modules
-	 * Change folder to **netappfiles-powershell-nfs-sdk-sample\src\Advanced**
+	 * Change folder to **netappfiles-powershell-smb-script-sample\src\Advanced**
 	 * Change values bewtween brackets [ ] below and then run the command 
      ```powershell 
 	 CreateANFVolume.ps1 -SubscriptionId '[subscriptionId]' -ResourceGroupName '[Azure Resource Group Name]' -Location '[Azure Location]' -NetAppAccountName '[ANF Account Name]' -NetAppPoolName '[ANF Capacity Pool Name]' -ServiceLevel [Ultra,Premium, Standard] -NetAppVolumeName '[ANF Volume Name]' -SubnetId '[Subnet ID] -DomainJoinUsername '[Username]' -DomainJoinPassword '[Password]' -DNSList 'DNS List' -ADFQDN 'Domain Name' -SmbServerNamePrefix 'SMB Server Name'
@@ -119,4 +119,3 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
 * [AZ.NetAppFile](https://docs.microsoft.com/en-us/powershell/module/az.netappfiles/?view=azps-4.8.0#netapp-files)
 * [Resource limits for Azure NetApp Files](https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-resource-limits)
 * [Azure Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/quickstart)
-* [Download Azure SDKs](https://azure.microsoft.com/downloads/)

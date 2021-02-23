@@ -3,96 +3,78 @@
 # This source code is licensed under the MIT license found in the LICENSE file in the root directory of the source tree
 
 <#
-.SYNOPSIS
-    This script creates Azure Netapp files resources with SMB volume type
-.DESCRIPTION
-    Authenticates with Azure and select the targeted subscription first, then created ANF account, capacity pool and SMB Volume
-.PARAMETER SubscriptionId
-    Target Subscription
-.PARAMETER ResourceGroupName
-    Name of the Azure Resource Group where the ANF will be created
-.PARAMETER Location
-    Azure Location (e.g 'WestUS', 'EastUS')
-.PARAMETER NetAppAccountName
-    Name of the Azure NetApp Files Account
-.PARAMETER NetAppPoolName
-    Name of the Azure NetApp Files Capacity Pool
-.PARAMETER ServiceLevel
-    Service Level - Ultra, Premium or Standard
-.PARAMETER NetAppPoolSize
-    Size of the Azure NetApp Files Capacity Pool in Bytes. Range between 4398046511104 and 549755813888000
-.PARAMETER NetAppVolumeName\
-    Name of the Azure NetApp Files Volume
-.PARAMETER NetAppVolumeSize
-    Size of the Azure NetApp Files volume in Bytes. Range between 107374182400 and 109951162777600
-.PARAMETER SubnetId
-    The Delegated subnet Id within the VNET
-.PARAMETER DomainJoinUsername
-    Domain Username
-.PARAMETER DomainJoinPassword
-    Domain Password
-.PARAMETER DNSList
-    Comma-seperated DNS list
-.PARAMETER ADFQDN
-    Active Directory FQDN
-.PARAMETER SmbServerNamePrefix
-    SMB Server name prefix
-.PARAMETER CleanupResources
-    If the script should clean up the resources, $false by default
-.EXAMPLE
-    PS C:\\> CreateANFVolume.ps1 -SubscriptionId '00000000-0000-0000-0000-000000000000' -ResourceGroupName 'My-RG' -Location 'WestUS' -NetAppAccountName 'testaccount' -NetAppPoolName 'pool1' -ServiceLevel Standard -NetAppVolumeName 'vol1' -ProtocolType NFSv4.1 -SubnetId '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/My-RG/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1'
+    .SYNOPSIS
+        This script creates Azure Netapp files resources with SMB volume type
+    .DESCRIPTION
+        Authenticates with Azure and select the targeted subscription first, then created ANF account, capacity pool and SMB Volume
+    .PARAMETER SubscriptionId
+        Target Subscription
+    .PARAMETER ResourceGroupName
+        Name of the Azure Resource Group where the ANF will be created
+    .PARAMETER Location
+        Azure Location (e.g 'WestUS', 'EastUS')
+    .PARAMETER NetAppAccountName
+        Name of the Azure NetApp Files Account
+    .PARAMETER NetAppPoolName
+        Name of the Azure NetApp Files Capacity Pool
+    .PARAMETER ServiceLevel
+        Service Level - Ultra, Premium or Standard
+    .PARAMETER NetAppPoolSize
+        Size of the Azure NetApp Files Capacity Pool in Bytes. Range between 4398046511104 and 549755813888000
+    .PARAMETER NetAppVolumeName\
+        Name of the Azure NetApp Files Volume
+    .PARAMETER NetAppVolumeSize
+        Size of the Azure NetApp Files volume in Bytes. Range between 107374182400 and 109951162777600
+    .PARAMETER SubnetId
+        The Delegated subnet Id within the VNET
+    .PARAMETER Credential
+            Domain credential object
+    .PARAMETER DNSList
+        Comma-seperated DNS list
+    .PARAMETER ADFQDN
+        Active Directory FQDN
+    .PARAMETER SmbServerNamePrefix
+        SMB Server name prefix
+    .PARAMETER CleanupResources
+        If the script should clean up the resources, $false by default
+    .EXAMPLE
+        PS C:\\> CreateANFVolume.ps1 -SubscriptionId '00000000-0000-0000-0000-000000000000' -ResourceGroupName 'My-RG' -Location 'WestUS' -NetAppAccountName 'testaccount' -NetAppPoolName 'pool1' -ServiceLevel Standard -NetAppVolumeName 'vol1' -ProtocolType NFSv4.1 -SubnetId '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/My-RG/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1'
 #>
 param
 (
-    # Name of the Azure Resource Group
     [string]$ResourceGroupName = 'My-RG',
 
-    #Azure location 
     [string]$Location = 'WestUS',
 
-    #Azure NetApp Files account name
     [string]$NetAppAccountName = 'anfaccount',
-
-    #Azure NetApp Files capacity pool name    
+  
     [string]$NetAppPoolName = 'pool1',
 
-    # Service Level can be {Ultra, Premium or Standard}
     [ValidateSet("Ultra","Premium","Standard")]
     [string]$ServiceLevel = 'Standard',
 
-    #Azure NetApp Files capacity pool size
     [ValidateRange(4398046511104,549755813888000)]
     [long]$NetAppPoolSize = 4398046511104,
 
-    #Azure NetApp Files volume name
     [string]$NetAppVolumeName = 'vol1',
 
-    #Azure NetApp Files volume size
     [ValidateRange(107374182400,109951162777600)]
     [long]$NetAppVolumeSize=107374182400,
 
-    #Subnet Id 
     [string]$SubnetId = 'Subnet ID',
-    
-    #Domain Join Username    
-    [string]$DomainJoinUsername = 'pmcadmin',
+  
+    [pscredential]$Credential,
 
-    #Domain Join Password
-    [string]$DomainJoinPassword = 'Pa$$w0rd',
-
-    #DNS List
     [string]$DNSList = '10.0.2.4,10.0.2.5',
 
-    #Active Directory FQDN
     [string]$ADFQDN = 'testdomain.local',
 
-    #SMB Server Name Prefix
     [string]$SmbServerNamePrefix = 'pmcsmb',
 
-    #Clean Up resources
     [bool]$CleanupResources = $false
 )
 
+$ErrorActionPreference="Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # Authorizing and connecting to Azure
@@ -103,8 +85,8 @@ Add-AzAccount
 Write-Verbose -Message "Creating Azure NetApp Files Account -> $NetAppAccountName" -Verbose
 $ActiveDirectory = New-Object Microsoft.Azure.Commands.NetAppFiles.Models.PSNetAppFilesActiveDirectory
 $ActiveDirectory.Dns = $DNSList
-$ActiveDirectory.Username = $DomainJoinUsername
-$ActiveDirectory.Password = $DomainJoinPassword
+$ActiveDirectory.Username = $Credential.UserName
+$ActiveDirectory.Password = $Credential.GetNetworkCredential().Password
 $ActiveDirectory.Domain = $ADFQDN
 $ActiveDirectory.SmbServerName = $SmbServerNamePrefix
 
@@ -126,7 +108,7 @@ $NewANFPool= New-AzNetAppFilesPool -ResourceGroupName $ResourceGroupName `
 
 Write-Verbose -Message "Azure NetApp Files Capacity Pool has been created successfuuly: $($NewANFPool.Id)" -Verbose
 
-#Create Azure NetApp Files NFS Volume
+# Create Azure NetApp Files NFS Volume
 Write-Verbose -Message "Creating Azure NetApp Files - SMB Volume -> $NetAppVolumeName" -Verbose
 $NewANFVolume = New-AzNetAppFilesVolume -ResourceGroupName $ResourceGroupName `
     -Location $Location `
@@ -146,8 +128,7 @@ Write-Verbose -Message "====> SMB Server FQDN: $($NewANFVolume.MountTargets[0].s
 Write-Verbose -Message "Azure NetApp Files has been created successfully." -Verbose
 
 if($CleanupResources)
-{
-    
+{    
     Write-Verbose -Message "Cleaning up Azure NetApp Files resources..." -Verbose
 
     Write-Verbose -Message "Deleting Azure NetApp Files Volume $NetAppVolumeName" -Verbose
